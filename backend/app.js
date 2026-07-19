@@ -22,6 +22,7 @@ for (const o of envOrigins) {
   if (o !== "*") defaultAllowedOrigins.add(o);
 }
 
+console.log("CORS_ORIGIN =", process.env.CORS_ORIGIN);
 app.use(
   cors({
     origin(origin, callback) {
