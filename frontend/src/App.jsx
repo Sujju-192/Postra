@@ -1,30 +1,61 @@
-import React from 'react'
-import HomePage from './components/HomePage'
-import axios from "axios"
-import { useState } from 'react'
-import { useEffect } from 'react';
+import React, { useEffect, useState } from "react";
+import api from "./api/axios.js";
+import { Routes, Route } from "react-router-dom";
+
+import AppLayout from "./components/AppLayout";
+import HomePage from "./components/HomePage";
+import Explore from "./components/Explore";
+import Profile from "./components/Profile";
+import Auth from "./components/Auth";
+import Landing from "./components/Landing";
+import CreatePost from "./components/CreatePost";
 
 export default function App() {
-  const[jokes, setJokes] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(null); // null = loading
+
   useEffect(() => {
-    axios.get('/api/jokes')
-    .then((response) => {
-      setJokes(response.data);
-    })
-    .catch((err) => {
-      console.log(`Error ${err}`)
-    })
-  }, [])
+    const checkUser = async () => {
+      try {
+        const res = await api.get("/api/users/profile", {
+          withCredentials: true,
+          timeout: 5000,
+        });
+
+        if (res.data.user) {
+          setIsLoggedIn(true);
+        }
+      } catch {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkUser();
+  }, []);
+
+
+  if (isLoggedIn === null) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div>
-      {jokes.map((value, idx) => {
-        return (
-        <div key={idx}>
-          <h3>{value.title}</h3>
-          <h4>{value.content}</h4>
-        </div>
-      )})}
-      {console.log(jokes)}
-    </div>
-  )
+    <Routes>
+      {!isLoggedIn ? (
+        <>
+          <Route path="/" element={<Landing />} />
+          <Route path="/auth" element={<Auth setIsLoggedIn={setIsLoggedIn} />} />
+        </>
+      ) : (
+        <>
+          <Route element={<AppLayout setIsLoggedIn={setIsLoggedIn} />}>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/user/:userId" element={<Profile />} />
+            <Route path="/create-post" element={<CreatePost />} />
+            <Route path="*" element={<HomePage />} />
+          </Route>
+        </>
+      )}
+    </Routes>
+  );
 }

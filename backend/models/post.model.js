@@ -14,15 +14,14 @@ const postSchema = new mongoose.Schema({
         type: String,
         trim: true, 
     },
-    hashtags: {
+    hashtags: [{
         type: String,
-        required: true,
         trim: true, 
         index: true
-    },
+    }],
     likes: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
     }],
     comments: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -30,4 +29,4 @@ const postSchema = new mongoose.Schema({
     }],
 }, {timestamps: true});
 
-export const Post = mongoose.model("Post", userSchema);
+export const Post = mongoose.model("Post", postSchema);
