@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import api from "../utils/axios";
+import api from "../api/axios";
 
 export default function Auth({ setIsLoggedIn }) {
   const MotionDiv = motion.div;
