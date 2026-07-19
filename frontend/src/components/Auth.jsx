@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import api from "../utils/axios";
 
 export default function Auth({ setIsLoggedIn }) {
   const MotionDiv = motion.div;
@@ -30,15 +31,8 @@ export default function Auth({ setIsLoggedIn }) {
 
   // Same-origin via Vite proxy so auth cookies are stored for :5173
   const apiRequest = async (url, data) => {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-      credentials: "include",
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.message || "Something went wrong");
-    return result;
+    const response = await api.post(url, data);
+    return response.data;
   };
 
   const handleLogin = async (e) => {
